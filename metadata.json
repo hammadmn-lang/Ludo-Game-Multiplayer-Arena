@@ -1,0 +1,6 @@
+{
+  "name": "Ludo Game & Multiplayer Arena",
+  "description": "Full-featured Ludo game featuring VS Computer AI, Local Pass & Play, Real-time Online Matchmaking, live in-game chat, turn notifications, player rankings, profile statistics, and match history.",
+  "requestFramePermissions": ["notifications"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

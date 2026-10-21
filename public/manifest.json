@@ -1,0 +1,66 @@
+{
+  "id": "/",
+  "name": "Ludo Game & Multiplayer Arena",
+  "short_name": "Ludo Arena",
+  "description": "Full-featured Ludo game featuring VS Computer AI, Local Pass & Play, Real-time Online Matchmaking, live in-game chat, turn notifications, player rankings, profile statistics, and match history.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["games", "entertainment", "board"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/phone-screenshot-1.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Real-time Multiplayer Match with 3D Dice and In-Game Chat"
+    },
+    {
+      "src": "/screenshots/phone-screenshot-3-gameplay.svg",
+      "sizes": "1080x1920",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Live 4-Player Championship Board and Dice Rolling"
+    },
+    {
+      "src": "/screenshots/phone-screenshot-2-themes.svg",
+      "sizes": "1080x1920",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Theme & Skins Studio - Custom Boards, Dice & Tokens"
+    },
+    {
+      "src": "/screenshots/phone-screenshot-4-rankings.svg",
+      "sizes": "1080x1920",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Global Championship Leaderboards & Elo Career Milestones"
+    },
+    {
+      "src": "/screenshots/feature-graphic.jpg",
+      "sizes": "1920x1080",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Ludo Arena Championship Presentation"
+    }
+  ]
+}
