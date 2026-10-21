@@ -1390,7 +1390,8 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    // Allow dotfiles so /.well-known/assetlinks.json is served properly
+    app.use(express.static(distPath, { dotfiles: 'allow' }));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });

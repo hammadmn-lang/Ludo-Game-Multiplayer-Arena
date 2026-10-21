@@ -73,6 +73,10 @@
       "destination": "/icon.svg"
     },
     {
+      "source": "/icon-(.*).png",
+      "destination": "/icon-$1.png"
+    },
+    {
       "source": "/manifest.json",
       "destination": "/manifest.json"
     },
