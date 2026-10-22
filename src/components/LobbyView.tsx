@@ -34,6 +34,8 @@ interface LobbyViewProps {
   onOpenContacts?: () => void;
   onOpenThemes?: () => void;
   onOpenPrivacyPolicy?: () => void;
+  onOpenDeleteAccount?: () => void;
+  onOpenDataSafety?: () => void;
   onOpenScreenshots?: () => void;
   themeSettings?: ThemeSettings;
   onStartVsComputer: (
@@ -60,6 +62,8 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   onOpenContacts,
   onOpenThemes,
   onOpenPrivacyPolicy,
+  onOpenDeleteAccount,
+  onOpenDataSafety,
   onOpenScreenshots,
   themeSettings,
   onStartVsComputer,
@@ -773,18 +777,18 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3">
           {onOpenScreenshots && (
             <button
               onClick={onOpenScreenshots}
               className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition cursor-pointer"
               id="footer-btn-screenshots"
             >
-              <span>Phone Screenshots</span>
+              <span>Screenshots</span>
             </button>
           )}
 
-          <span className="text-slate-600">•</span>
+          <span className="text-slate-700">•</span>
 
           {onOpenPrivacyPolicy && (
             <button
@@ -792,7 +796,31 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
               className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 transition cursor-pointer"
               id="footer-btn-privacy"
             >
-              <span>Privacy Policy &amp; Google Ads</span>
+              <span>Privacy Policy</span>
+            </button>
+          )}
+
+          <span className="text-slate-700">•</span>
+
+          {onOpenDataSafety && (
+            <button
+              onClick={onOpenDataSafety}
+              className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1 transition cursor-pointer"
+              id="footer-btn-data-safety"
+            >
+              <span>Data Safety</span>
+            </button>
+          )}
+
+          <span className="text-slate-700">•</span>
+
+          {onOpenDeleteAccount && (
+            <button
+              onClick={onOpenDeleteAccount}
+              className="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 transition cursor-pointer"
+              id="footer-btn-delete-account"
+            >
+              <span>Delete Account</span>
             </button>
           )}
         </div>

@@ -18,11 +18,14 @@ import {
   Palette,
   Smartphone,
   ShieldCheck,
+  Trash2,
+  Database,
+  ShieldAlert,
 } from 'lucide-react';
 
 interface HeaderNavProps {
-  currentScreen: 'lobby' | 'game' | 'waiting_room' | 'leaderboard' | 'profile';
-  onNavigate: (screen: 'lobby' | 'game' | 'leaderboard' | 'profile') => void;
+  currentScreen: 'lobby' | 'game' | 'waiting_room' | 'leaderboard' | 'profile' | 'privacy' | 'delete-account' | 'data-safety';
+  onNavigate: (screen: 'lobby' | 'game' | 'leaderboard' | 'profile' | 'privacy' | 'delete-account' | 'data-safety') => void;
   user: UserProfile | null;
   hasActiveGame?: boolean;
   onReturnToGame?: () => void;
@@ -30,6 +33,8 @@ interface HeaderNavProps {
   onOpenThemes?: () => void;
   onOpenScreenshots?: () => void;
   onOpenPrivacyPolicy?: () => void;
+  onOpenDeleteAccount?: () => void;
+  onOpenDataSafety?: () => void;
   onOpenAuth: () => void;
   onOpenRules: () => void;
   isMuted: boolean;
@@ -48,6 +53,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   onOpenThemes,
   onOpenScreenshots,
   onOpenPrivacyPolicy,
+  onOpenDeleteAccount,
+  onOpenDataSafety,
   onOpenAuth,
   onOpenRules,
   isMuted,
@@ -176,15 +183,51 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             </button>
           )}
 
-          {/* Privacy Policy & Copyrights Button */}
+          {/* Privacy Policy Button */}
           {onOpenPrivacyPolicy && (
             <button
               onClick={onOpenPrivacyPolicy}
-              className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-slate-800 transition cursor-pointer relative"
-              title="Privacy Policy & Copyrights (Google Ads Active)"
+              className={`p-2.5 rounded-xl border transition cursor-pointer relative ${
+                currentScreen === 'privacy'
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-slate-800'
+              }`}
+              title="Privacy Policy & Terms"
               id="btn-open-privacy"
             >
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            </button>
+          )}
+
+          {/* Data Safety Disclosure Button */}
+          {onOpenDataSafety && (
+            <button
+              onClick={onOpenDataSafety}
+              className={`p-2.5 rounded-xl border transition cursor-pointer relative ${
+                currentScreen === 'data-safety'
+                  ? 'bg-cyan-600 text-white border-cyan-500 shadow-md'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-cyan-400 hover:bg-slate-800'
+              }`}
+              title="Google Play Data Safety Disclosure"
+              id="btn-open-data-safety"
+            >
+              <Database className="w-4 h-4 text-cyan-400" />
+            </button>
+          )}
+
+          {/* Delete Account & Data Button */}
+          {onOpenDeleteAccount && (
+            <button
+              onClick={onOpenDeleteAccount}
+              className={`p-2.5 rounded-xl border transition cursor-pointer relative ${
+                currentScreen === 'delete-account'
+                  ? 'bg-rose-600 text-white border-rose-500 shadow-md'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-rose-400 hover:bg-slate-800'
+              }`}
+              title="Delete Account & Purge Data (Google Play Requirement)"
+              id="btn-open-delete-account"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" />
             </button>
           )}
 

@@ -37,6 +37,9 @@ import { ThemeModal } from './components/ThemeModal';
 import { GoogleAdsBanner } from './components/GoogleAdsBanner';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
 import { ScreenshotsModal } from './components/ScreenshotsModal';
+import { PrivacyPolicyView } from './components/PrivacyPolicyView';
+import { DeleteAccountView } from './components/DeleteAccountView';
+import { DataSafetyView } from './components/DataSafetyView';
 import { ThemeSettings } from './types/theme';
 import { getSavedThemeSettings, saveThemeSettings } from './utils/themeData';
 import {
@@ -64,7 +67,7 @@ import {
 export default function App() {
   // Navigation & User State
   const [currentScreen, setCurrentScreen] = useState<
-    'lobby' | 'game' | 'waiting_room' | 'leaderboard' | 'profile'
+    'lobby' | 'game' | 'waiting_room' | 'leaderboard' | 'profile' | 'privacy' | 'delete-account' | 'data-safety'
   >('lobby');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -180,6 +183,35 @@ export default function App() {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setHasNotificationPermission(Notification.permission === 'granted');
     }
+
+    // Google Play Policy & Erasure direct URL route handler
+    const handleUrlRoute = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path === '/privacy' || path === '/privacy.html' || hash === '#privacy') {
+        setCurrentScreen('privacy');
+      } else if (path === '/delete-account' || path === '/delete-account.html' || hash === '#delete-account') {
+        setCurrentScreen('delete-account');
+      } else if (
+        path === '/data-safety' ||
+        path === '/data-safety.html' ||
+        path === '/data' ||
+        path === '/data.html' ||
+        hash === '#data-safety' ||
+        hash === '#data'
+      ) {
+        setCurrentScreen('data-safety');
+      }
+    };
+
+    handleUrlRoute();
+    window.addEventListener('hashchange', handleUrlRoute);
+    window.addEventListener('popstate', handleUrlRoute);
+
+    return () => {
+      window.removeEventListener('hashchange', handleUrlRoute);
+      window.removeEventListener('popstate', handleUrlRoute);
+    };
   }, []);
 
   const handleToggleMute = () => {
@@ -1152,7 +1184,9 @@ export default function App() {
         onOpenContacts={() => setIsContactsModalOpen(true)}
         onOpenThemes={() => setIsThemeModalOpen(true)}
         onOpenScreenshots={() => setIsScreenshotsModalOpen(true)}
-        onOpenPrivacyPolicy={() => setIsPrivacyPolicyModalOpen(true)}
+        onOpenPrivacyPolicy={() => setCurrentScreen('privacy')}
+        onOpenDeleteAccount={() => setCurrentScreen('delete-account')}
+        onOpenDataSafety={() => setCurrentScreen('data-safety')}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenRules={() => setIsRulesModalOpen(true)}
         isMuted={isMuted}
@@ -1182,7 +1216,9 @@ export default function App() {
             onOpenContacts={() => setIsContactsModalOpen(true)}
             onOpenThemes={() => setIsThemeModalOpen(true)}
             onOpenScreenshots={() => setIsScreenshotsModalOpen(true)}
-            onOpenPrivacyPolicy={() => setIsPrivacyPolicyModalOpen(true)}
+            onOpenPrivacyPolicy={() => setCurrentScreen('privacy')}
+            onOpenDeleteAccount={() => setCurrentScreen('delete-account')}
+            onOpenDataSafety={() => setCurrentScreen('data-safety')}
             themeSettings={themeSettings}
             onStartVsComputer={startVsComputerGame}
             onStartLocalMultiplayer={startLocalMultiplayerGame}
@@ -1376,6 +1412,37 @@ export default function App() {
             onUpdateUser={(updated) => setUser(updated)}
             onDeleteAccount={handleDeleteAccount}
             onClearLocalData={handleClearLocalData}
+          />
+        )}
+
+        {/* Screen 6: Privacy Policy & Terms */}
+        {currentScreen === 'privacy' && (
+          <PrivacyPolicyView
+            onBack={() => setCurrentScreen('lobby')}
+            onNavigateToDeleteAccount={() => setCurrentScreen('delete-account')}
+            onNavigateToDataSafety={() => setCurrentScreen('data-safety')}
+          />
+        )}
+
+        {/* Screen 7: Delete Account & Data Erasure */}
+        {currentScreen === 'delete-account' && (
+          <DeleteAccountView
+            user={user}
+            authToken={authToken}
+            onBack={() => setCurrentScreen('lobby')}
+            onNavigateToPolicy={() => setCurrentScreen('privacy')}
+            onNavigateToDataSafety={() => setCurrentScreen('data-safety')}
+            onDeleteCurrentAccount={handleDeleteAccount}
+            onClearLocalData={handleClearLocalData}
+          />
+        )}
+
+        {/* Screen 8: Google Play Data Safety Disclosure */}
+        {currentScreen === 'data-safety' && (
+          <DataSafetyView
+            onBack={() => setCurrentScreen('lobby')}
+            onNavigateToPolicy={() => setCurrentScreen('privacy')}
+            onNavigateToDeleteAccount={() => setCurrentScreen('delete-account')}
           />
         )}
       </main>

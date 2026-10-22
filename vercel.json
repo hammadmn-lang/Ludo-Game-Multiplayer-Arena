@@ -77,12 +77,32 @@
       "destination": "/icon-$1.png"
     },
     {
-      "source": "/manifest.json",
-      "destination": "/manifest.json"
+      "source": "/privacy",
+      "destination": "/privacy.html"
     },
     {
-      "source": "/sw.js",
-      "destination": "/sw.js"
+      "source": "/privacy.html",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/delete-account",
+      "destination": "/delete-account.html"
+    },
+    {
+      "source": "/delete-account.html",
+      "destination": "/delete-account.html"
+    },
+    {
+      "source": "/data-safety",
+      "destination": "/data-safety.html"
+    },
+    {
+      "source": "/data-safety.html",
+      "destination": "/data-safety.html"
+    },
+    {
+      "source": "/data",
+      "destination": "/data-safety.html"
     },
     {
       "source": "/(.*)",

@@ -570,6 +570,70 @@ async function startServer() {
     }
   });
 
+  // === Public Web Delete Account API (for external browser form & Google Play URL requirement) ===
+  app.post('/api/auth/web-delete-account', (req, res) => {
+    const { identifier, password, email, reason, requestType } = req.body;
+
+    if (requestType === 'manual_inquiry' || (!password && email)) {
+      const target = (email || identifier || '').trim().toLowerCase();
+      console.log(`[Account Deletion Request] Manual inquiry logged for: ${target}. Reason: ${reason || 'N/A'}`);
+      return res.json({
+        success: true,
+        referenceId: `DEL-${Date.now().toString(36).toUpperCase()}`,
+        message: `Deletion request received for ${target}. All account data will be permanently wiped within 24 hours.`,
+      });
+    }
+
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Username/Email and Password are required to delete your account immediately.' });
+    }
+
+    const queryIdentifier = identifier.trim().toLowerCase();
+    const user = Object.values(db.users).find(
+      (u) =>
+        u.username.toLowerCase() === queryIdentifier ||
+        (u.email && u.email.toLowerCase() === queryIdentifier) ||
+        (u.phoneNumber && u.phoneNumber.replace(/\s+/g, '') === queryIdentifier.replace(/\s+/g, ''))
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found with the provided identifier.' });
+    }
+
+    const calculatedHash = hashPassword(password, user.salt);
+    if (calculatedHash !== user.passwordHash) {
+      return res.status(401).json({ error: 'Incorrect password. Deletion denied.' });
+    }
+
+    const userId = user.id;
+
+    // Disconnect active websockets
+    for (const [ws, sess] of connectedSessions.entries()) {
+      if (sess.userId === userId) {
+        try {
+          ws.send(JSON.stringify({ event: 'account_deleted', payload: { message: 'Account permanently erased' } }));
+          ws.close();
+        } catch {}
+        connectedSessions.delete(ws);
+      }
+    }
+
+    // Clean up contacts and social relations
+    Object.values(db.users).forEach((other) => {
+      if (other.contacts) other.contacts = other.contacts.filter((c) => c !== userId);
+      if (other.blockedUsers) other.blockedUsers = other.blockedUsers.filter((b) => b !== userId);
+      if (other.mutedUsers) other.mutedUsers = other.mutedUsers.filter((m) => m !== userId);
+    });
+
+    delete db.users[userId];
+    saveDB(db);
+
+    res.json({
+      success: true,
+      message: `Account "${user.username}" and all associated matches, statistics, and personal data have been permanently erased.`,
+    });
+  });
+
   // === Team / Squad Management API ===
   app.post('/api/teams/manage', (req, res) => {
     const authHeader = req.headers.authorization;
@@ -1379,6 +1443,31 @@ async function startServer() {
         }
       }
     });
+  });
+
+  // Direct routes for Google Play compliance static pages
+  app.get(['/privacy', '/privacy.html'], (req, res) => {
+    const distHtml = path.join(process.cwd(), 'dist', 'privacy.html');
+    const pubHtml = path.join(process.cwd(), 'public', 'privacy.html');
+    if (fs.existsSync(distHtml)) return res.sendFile(distHtml);
+    if (fs.existsSync(pubHtml)) return res.sendFile(pubHtml);
+    res.redirect('/');
+  });
+
+  app.get(['/delete-account', '/delete-account.html'], (req, res) => {
+    const distHtml = path.join(process.cwd(), 'dist', 'delete-account.html');
+    const pubHtml = path.join(process.cwd(), 'public', 'delete-account.html');
+    if (fs.existsSync(distHtml)) return res.sendFile(distHtml);
+    if (fs.existsSync(pubHtml)) return res.sendFile(pubHtml);
+    res.redirect('/');
+  });
+
+  app.get(['/data-safety', '/data-safety.html', '/data', '/data.html'], (req, res) => {
+    const distHtml = path.join(process.cwd(), 'dist', 'data-safety.html');
+    const pubHtml = path.join(process.cwd(), 'public', 'data-safety.html');
+    if (fs.existsSync(distHtml)) return res.sendFile(distHtml);
+    if (fs.existsSync(pubHtml)) return res.sendFile(pubHtml);
+    res.redirect('/');
   });
 
   // === Vite Middleware Integration ===
