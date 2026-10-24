@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.ludoarena.app",
-      "sha256_cert_fingerprints": [
-        "REPLACE_WITH_YOUR_RELEASE_KEYSTORE_OR_PLAY_APP_SIGNING_SHA256_FINGERPRINT"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.hammad.panjsurah",
+        "sha256_cert_fingerprints": ["80:B5:63:8E:02:89:62:D9:43:6A:94:3A:31:CF:4C:F2:52:94:28:8D:A7:48:C9:0E:79:3B:C8:41:DC:29:2B:FF"]
+      }
+    }]
