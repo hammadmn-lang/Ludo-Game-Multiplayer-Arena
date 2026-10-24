@@ -14,6 +14,7 @@ import {
   Pause,
   Play,
   UserCheck,
+  Flag,
 } from 'lucide-react';
 
 interface InGameChatProps {
@@ -49,6 +50,8 @@ export const InGameChat: React.FC<InGameChatProps> = ({
   const [activeModerationId, setActiveModerationId] = useState<string | null>(null);
   const [showBlockedList, setShowBlockedList] = useState(false);
   const [moderationNotice, setModerationNotice] = useState<string | null>(null);
+  const [reportingMessage, setReportingMessage] = useState<{ id: string; senderId: string; senderName: string; text: string } | null>(null);
+  const [reportReason, setReportReason] = useState('Inappropriate or abusive language');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Filter out messages from blocked and muted users
@@ -105,6 +108,30 @@ export const InGameChat: React.FC<InGameChatProps> = ({
       setTimeout(() => setModerationNotice(null), 3500);
       setActiveModerationId(null);
     }
+  };
+
+  const handleOpenReport = (msg: { id: string; senderId?: string; senderName: string; text: string }) => {
+    setReportingMessage({
+      id: msg.id,
+      senderId: msg.senderId || msg.senderName,
+      senderName: msg.senderName,
+      text: msg.text,
+    });
+    setActiveModerationId(null);
+  };
+
+  const handleConfirmReport = () => {
+    if (!reportingMessage) return;
+    const { senderId, senderName } = reportingMessage;
+
+    // Automatically block the reported user to protect the player
+    if (onToggleBlock && !blockedUsers.includes(senderId)) {
+      onToggleBlock(senderId);
+    }
+
+    setModerationNotice(`Report submitted for ${senderName} (${reportReason}). User blocked & flagged for review.`);
+    setTimeout(() => setModerationNotice(null), 4000);
+    setReportingMessage(null);
   };
 
   return (
@@ -234,8 +261,70 @@ export const InGameChat: React.FC<InGameChatProps> = ({
             </div>
           )}
 
-          {/* Blocked Users Sheet */}
-          {showBlockedList ? (
+          {/* User & Content Reporting Form */}
+          {reportingMessage ? (
+            <div className="flex-1 p-4 bg-slate-950 overflow-y-auto space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <Flag className="w-4 h-4 text-rose-400" />
+                  <h4 className="font-bold text-xs text-white">Report User or Content</h4>
+                </div>
+                <button
+                  onClick={() => setReportingMessage(null)}
+                  className="text-xs text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
+                <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Reported Player</p>
+                <p className="font-bold text-white text-sm">{reportingMessage.senderName}</p>
+                <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-2">Message Content</p>
+                <p className="italic text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-slate-800 break-words">
+                  &ldquo;{reportingMessage.text}&rdquo;
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-300">Reason for report</label>
+                <select
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-rose-500"
+                >
+                  <option value="Inappropriate or abusive language">Inappropriate or abusive language</option>
+                  <option value="Harassment, bullying, or threats">Harassment, bullying, or threats</option>
+                  <option value="Hate speech or discriminatory content">Hate speech or discriminatory content</option>
+                  <option value="Spam, advertising, or scamming">Spam, advertising, or scamming</option>
+                  <option value="Offensive player name">Offensive player name</option>
+                  <option value="Cheating or exploiting">Cheating or exploiting</option>
+                </select>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-rose-950/30 border border-rose-900/40 text-[11px] text-rose-300 flex items-start gap-2">
+                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <span>Submitting this report immediately blocks this player from your match chat and logs the incident for moderation.</span>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setReportingMessage(null)}
+                  className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmReport}
+                  className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-600/30"
+                >
+                  Submit Report
+                </button>
+              </div>
+            </div>
+          ) : showBlockedList ? (
             <div className="flex-1 p-4 bg-slate-950 overflow-y-auto space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                 <div className="flex items-center gap-2">
@@ -420,9 +509,18 @@ export const InGameChat: React.FC<InGameChatProps> = ({
                                   title="Block user from chat"
                                 >
                                   <UserX className="w-2.5 h-2.5" />
-                                  {isSenderBlocked ? 'Unblock' : 'Block User'}
+                                  {isSenderBlocked ? 'Unblock' : 'Block'}
                                 </button>
                               )}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenReport(msg)}
+                                className="px-2 py-0.5 rounded bg-red-600/30 text-red-300 hover:bg-red-600/50 flex items-center gap-1 font-bold"
+                                title="Report user or inappropriate content"
+                              >
+                                <Flag className="w-2.5 h-2.5" />
+                                Report
+                              </button>
                             </div>
                           </div>
                         )}

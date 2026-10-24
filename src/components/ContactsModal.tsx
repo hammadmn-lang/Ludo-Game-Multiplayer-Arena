@@ -236,13 +236,28 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({
     }
   };
 
-  const handleCopyInviteLink = () => {
+  const handleCopyInviteLink = async () => {
     const inviteUrl = window.location.origin;
-    navigator.clipboard.writeText(
-      `🎲 Join me for a game of Ludo King on Ludo Master! Play online here: ${inviteUrl}`
-    );
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
+    const shareText = `🎲 Join me for a game of Ludo King on Ludo Arena! Play online here: ${inviteUrl}`;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Play Ludo Multiplayer Arena',
+          text: shareText,
+          url: inviteUrl,
+        });
+        return;
+      } catch {
+        // Fallback to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      // Fallback
+    }
   };
 
   if (!isOpen) return null;
@@ -556,7 +571,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({
                           className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow transition flex items-center gap-1.5 cursor-pointer active:scale-95"
                         >
                           <Zap className="w-3.5 h-3.5" />
-                          <span>{item.isPlaying ? 'Join / Challenge' : 'Challenge'}</span>
+                          <span>{item.isPlaying ? 'Join Room' : 'Ask to Join Match'}</span>
                         </button>
                       </div>
                     </div>

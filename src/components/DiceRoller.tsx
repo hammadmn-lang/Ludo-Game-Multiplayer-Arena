@@ -16,6 +16,7 @@ interface DiceRollerProps {
   maxTime: number;
   timerEnabled?: boolean;
   diceSkin?: DiceSkinId;
+  gameMode?: string;
   onToggleTimer?: () => void;
   onRollClick: () => void;
 }
@@ -31,6 +32,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
   maxTime,
   timerEnabled = true,
   diceSkin = 'classic',
+  gameMode,
   onToggleTimer,
   onRollClick,
 }) => {
@@ -219,6 +221,10 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
             <p className="text-xs text-slate-400">
               {activePlayer.isAI
                 ? '🤖 AI is deciding...'
+                : gameMode === 'local_multiplayer'
+                ? !hasRolled
+                  ? `📱 Pass phone to ${activePlayer.name} to roll!`
+                  : `${activePlayer.name}, select a highlighted token!`
                 : !hasRolled
                 ? 'Waiting to roll dice...'
                 : 'Select a highlighted token!'}

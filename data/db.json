@@ -1,0 +1,192 @@
+{
+  "users": {
+    "user_grandmaster": {
+      "id": "user_grandmaster",
+      "username": "KingLudo_99",
+      "passwordHash": "d0b1e4ad495f6028016247e2dde3d073fedfca589703134d06b963e0ad4a77f32718a1713bd3efa0f848c79c748a2e63c182579811dbe55b2991ccc6880ff4d6",
+      "salt": "b47033629c40de843e64b62241830939",
+      "avatar": "👑",
+      "country": "United States 🇺🇸",
+      "location": "New York, NY",
+      "phoneNumber": "+1 (555) 234-5678",
+      "contacts": [
+        "user_master",
+        "user_diamond"
+      ],
+      "createdAt": "2026-09-24T19:42:41.717Z",
+      "stats": {
+        "totalMatches": 84,
+        "wins": 62,
+        "losses": 18,
+        "secondPlaces": 4,
+        "winStreak": 8,
+        "bestWinStreak": 12,
+        "tokensCaptured": 194,
+        "tokensLost": 48,
+        "sixesRolled": 340,
+        "eloRating": 2150
+      },
+      "matches": [
+        {
+          "id": "m_seed_1",
+          "date": "2026-10-24T18:42:41.717Z",
+          "mode": "online_multiplayer",
+          "playersCount": 4,
+          "playerColor": "red",
+          "rank": 1,
+          "durationSeconds": 420,
+          "tokensCaptured": 7,
+          "opponents": [
+            {
+              "name": "DiceMaster",
+              "color": "green",
+              "isAI": false
+            },
+            {
+              "name": "StarPawn",
+              "color": "yellow",
+              "isAI": false
+            },
+            {
+              "name": "ShadowKnight",
+              "color": "blue",
+              "isAI": false
+            }
+          ],
+          "eloChange": 24
+        }
+      ]
+    },
+    "user_master": {
+      "id": "user_master",
+      "username": "DiceQueen",
+      "passwordHash": "d0b1e4ad495f6028016247e2dde3d073fedfca589703134d06b963e0ad4a77f32718a1713bd3efa0f848c79c748a2e63c182579811dbe55b2991ccc6880ff4d6",
+      "salt": "b47033629c40de843e64b62241830939",
+      "avatar": "🌟",
+      "country": "United Kingdom 🇬🇧",
+      "location": "London",
+      "phoneNumber": "+44 7700 900123",
+      "contacts": [
+        "user_grandmaster"
+      ],
+      "createdAt": "2026-10-04T19:42:41.725Z",
+      "stats": {
+        "totalMatches": 65,
+        "wins": 45,
+        "losses": 16,
+        "secondPlaces": 4,
+        "winStreak": 4,
+        "bestWinStreak": 9,
+        "tokensCaptured": 142,
+        "tokensLost": 51,
+        "sixesRolled": 260,
+        "eloRating": 1940
+      },
+      "matches": []
+    },
+    "user_diamond": {
+      "id": "user_diamond",
+      "username": "PawnStriker",
+      "passwordHash": "d0b1e4ad495f6028016247e2dde3d073fedfca589703134d06b963e0ad4a77f32718a1713bd3efa0f848c79c748a2e63c182579811dbe55b2991ccc6880ff4d6",
+      "salt": "b47033629c40de843e64b62241830939",
+      "avatar": "🎯",
+      "country": "India 🇮🇳",
+      "location": "Mumbai",
+      "phoneNumber": "+91 98765 43210",
+      "contacts": [
+        "user_grandmaster"
+      ],
+      "createdAt": "2026-10-09T19:42:41.732Z",
+      "stats": {
+        "totalMatches": 42,
+        "wins": 26,
+        "losses": 14,
+        "secondPlaces": 2,
+        "winStreak": 3,
+        "bestWinStreak": 6,
+        "tokensCaptured": 89,
+        "tokensLost": 39,
+        "sixesRolled": 175,
+        "eloRating": 1780
+      },
+      "matches": []
+    },
+    "user_alex": {
+      "id": "user_alex",
+      "username": "Alex_Champion",
+      "passwordHash": "d0b1e4ad495f6028016247e2dde3d073fedfca589703134d06b963e0ad4a77f32718a1713bd3efa0f848c79c748a2e63c182579811dbe55b2991ccc6880ff4d6",
+      "salt": "b47033629c40de843e64b62241830939",
+      "avatar": "⚡",
+      "country": "Canada 🇨🇦",
+      "location": "Toronto",
+      "phoneNumber": "+1 (416) 555-0199",
+      "contacts": [],
+      "createdAt": "2026-10-14T19:42:41.740Z",
+      "stats": {
+        "totalMatches": 31,
+        "wins": 19,
+        "losses": 12,
+        "secondPlaces": 3,
+        "winStreak": 2,
+        "bestWinStreak": 5,
+        "tokensCaptured": 64,
+        "tokensLost": 28,
+        "sixesRolled": 120,
+        "eloRating": 1620
+      },
+      "matches": []
+    },
+    "user_samira": {
+      "id": "user_samira",
+      "username": "Samira_Pro",
+      "passwordHash": "d0b1e4ad495f6028016247e2dde3d073fedfca589703134d06b963e0ad4a77f32718a1713bd3efa0f848c79c748a2e63c182579811dbe55b2991ccc6880ff4d6",
+      "salt": "b47033629c40de843e64b62241830939",
+      "avatar": "🌸",
+      "country": "United Arab Emirates 🇦🇪",
+      "location": "Dubai",
+      "phoneNumber": "+971 50 123 4567",
+      "contacts": [],
+      "createdAt": "2026-10-16T19:42:41.747Z",
+      "stats": {
+        "totalMatches": 25,
+        "wins": 17,
+        "losses": 8,
+        "secondPlaces": 2,
+        "winStreak": 4,
+        "bestWinStreak": 7,
+        "tokensCaptured": 58,
+        "tokensLost": 22,
+        "sixesRolled": 95,
+        "eloRating": 1580
+      },
+      "matches": []
+    },
+    "user_1792881769955_ql2dm": {
+      "id": "user_1792881769955_ql2dm",
+      "username": "TestPlayer123",
+      "passwordHash": "96036872be2e3075d939787ade2f1e5bd7aad558bdd62641b267c687fe2408553bfd161fd6aaf7b882652e37ebd603fa18271dc51e1d35b8a28eaedcd9d7da0d",
+      "salt": "bf038fac394cce4b05bae731e6f61a57",
+      "avatar": "🦁",
+      "country": "United States 🇺🇸",
+      "location": "Online",
+      "phoneNumber": "",
+      "contacts": [],
+      "blockedUsers": [],
+      "mutedUsers": [],
+      "createdAt": "2026-10-24T22:42:49.955Z",
+      "stats": {
+        "totalMatches": 0,
+        "wins": 0,
+        "losses": 0,
+        "secondPlaces": 0,
+        "winStreak": 0,
+        "bestWinStreak": 0,
+        "tokensCaptured": 0,
+        "tokensLost": 0,
+        "sixesRolled": 0,
+        "eloRating": 1200
+      },
+      "matches": []
+    }
+  }
+}

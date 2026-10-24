@@ -262,8 +262,8 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
         </h3>
         <p className="text-xs text-slate-400">
           For any data inquiries, rights requests, or feedback, email us directly at{' '}
-          <a href="mailto:hammadmn@gmail.com" className="text-indigo-400 underline font-semibold">
-            hammadmn@gmail.com
+          <a href="mailto:hammadmn99@gmail.com" className="text-indigo-400 underline font-semibold">
+            hammadmn99@gmail.com
           </a>.
         </p>
         <p className="text-[11px] font-mono text-slate-500 pt-1">

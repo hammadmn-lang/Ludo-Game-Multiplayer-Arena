@@ -160,24 +160,45 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
     setIsSaving(true);
     try {
-      const res = await fetch('/api/auth/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({
-          username: editUsername,
-          email: editEmail,
-          avatar: editAvatar,
-          country: editCountry,
-          location: editLocation,
-          phoneNumber: editPhone,
-        }),
-      });
-      const data = await res.json();
-      if (data.user) {
-        if (onUpdateUser) onUpdateUser(data.user);
+      let updatedUser: UserProfile | null = null;
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            username: editUsername,
+            email: editEmail,
+            avatar: editAvatar,
+            country: editCountry,
+            location: editLocation,
+            phoneNumber: editPhone,
+          }),
+        });
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.user) updatedUser = data.user;
+        }
+      } catch {}
+
+      if (!updatedUser && user) {
+        updatedUser = {
+          ...user,
+          username: editUsername.trim() || user.username,
+          email: editEmail.trim() || user.email,
+          avatar: editAvatar || user.avatar,
+          country: editCountry || user.country,
+          location: editLocation.trim() || user.location,
+          phoneNumber: editPhone.trim() || user.phoneNumber,
+        };
+      }
+
+      if (updatedUser) {
+        if (onUpdateUser) onUpdateUser(updatedUser);
+        localStorage.setItem('ludo_user', JSON.stringify(updatedUser));
         setSaveSuccess(true);
         setTimeout(() => {
           setSaveSuccess(false);

@@ -40,6 +40,7 @@ import { ScreenshotsModal } from './components/ScreenshotsModal';
 import { PrivacyPolicyView } from './components/PrivacyPolicyView';
 import { DeleteAccountView } from './components/DeleteAccountView';
 import { DataSafetyView } from './components/DataSafetyView';
+import { fetchCurrentProfile } from './utils/authService';
 import { ThemeSettings } from './types/theme';
 import { getSavedThemeSettings, saveThemeSettings } from './utils/themeData';
 import {
@@ -72,6 +73,12 @@ export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authDefaultToRegister, setAuthDefaultToRegister] = useState(false);
+
+  const handleOpenAuth = (defaultToRegister = false) => {
+    setAuthDefaultToRegister(defaultToRegister);
+    setIsAuthModalOpen(true);
+  };
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
@@ -160,18 +167,20 @@ export default function App() {
   // Check saved authentication & cached game on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('ludo_auth_token');
+    const savedUser = localStorage.getItem('ludo_user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {}
+    }
     if (savedToken) {
       setAuthToken(savedToken);
-      fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${savedToken}` },
-      })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data?.user) {
-            setUser(data.user);
-          }
-        })
-        .catch(() => {});
+      fetchCurrentProfile(savedToken).then((profile) => {
+        if (profile) {
+          setUser(profile);
+          localStorage.setItem('ludo_user', JSON.stringify(profile));
+        }
+      });
     }
 
     // Check if there is an existing saved game
@@ -229,6 +238,11 @@ export default function App() {
     setUser(authUser);
     setAuthToken(token);
     localStorage.setItem('ludo_auth_token', token);
+    localStorage.setItem('ludo_user', JSON.stringify(authUser));
+
+    // User requirement: "once logon, user should land on home page"
+    setCurrentScreen('lobby');
+    window.location.hash = '';
 
     // Broadcast identity over WebSocket
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -516,16 +530,21 @@ export default function App() {
 
   const createOnlineRoom = (playersCount: number) => {
     const ws = connectWebSocket();
+    const curUser = user || {
+      id: `guest_${Date.now()}`,
+      username: `Host_${Math.floor(Math.random() * 1000)}`,
+      avatar: '👑',
+      stats: { eloRating: 1200 },
+    };
     ws.send(
       JSON.stringify({
         event: 'create_room',
         payload: {
-          user: user || {
-            id: `guest_${Date.now()}`,
-            username: `Host_${Math.floor(Math.random() * 1000)}`,
-            avatar: '👑',
-            stats: { eloRating: 1200 },
-          },
+          userId: curUser.id,
+          username: curUser.username,
+          avatar: curUser.avatar,
+          eloRating: curUser.stats.eloRating,
+          user: curUser,
           playersCount,
         },
       })
@@ -534,17 +553,22 @@ export default function App() {
 
   const joinOnlineRoom = (code: string) => {
     const ws = connectWebSocket();
+    const curUser = user || {
+      id: `guest_${Date.now()}`,
+      username: `Player_${Math.floor(Math.random() * 1000)}`,
+      avatar: '🎲',
+      stats: { eloRating: 1200 },
+    };
     ws.send(
       JSON.stringify({
         event: 'join_room',
         payload: {
           code: code.toUpperCase(),
-          user: user || {
-            id: `guest_${Date.now()}`,
-            username: `Player_${Math.floor(Math.random() * 1000)}`,
-            avatar: '🎲',
-            stats: { eloRating: 1200 },
-          },
+          userId: curUser.id,
+          username: curUser.username,
+          avatar: curUser.avatar,
+          eloRating: curUser.stats.eloRating,
+          user: curUser,
         },
       })
     );
@@ -1044,26 +1068,51 @@ export default function App() {
     localStorage.removeItem('ludo_chat_stopped');
   };
 
-  // Contacts challenge handler
-  const handleChallengeContact = (contactUser: UserProfile) => {
+  // Direct online player challenge handler
+  const handleDirectChallengeUser = (targetPlayer: { id: string; username: string; avatar?: string; eloRating?: number }) => {
     setIsContactsModalOpen(false);
     const ws = connectWebSocket();
-    const generatedCode = `LUDO${Math.floor(1000 + Math.random() * 9000)}`;
+    const generatedCode = `CHAMP${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const curUser = user || {
+      id: `guest_${Date.now()}`,
+      username: `Player_${Math.floor(Math.random() * 1000)}`,
+      avatar: '👑',
+      stats: { eloRating: 1200 },
+    };
 
     ws.send(
       JSON.stringify({
         event: 'invite_contact',
         payload: {
-          targetUserId: contactUser.id,
-          senderName: user?.username || 'Challenger',
+          targetUserId: targetPlayer.id,
+          senderName: curUser.username,
           roomCode: generatedCode,
-          mode: 'Championship Match',
+          mode: '1v1 Championship Duel',
         },
       })
     );
 
-    // Host room immediately
-    createOnlineRoom(2);
+    // Host room immediately with custom code and 2 players
+    ws.send(
+      JSON.stringify({
+        event: 'create_room',
+        payload: {
+          code: generatedCode,
+          userId: curUser.id,
+          username: curUser.username,
+          avatar: curUser.avatar,
+          eloRating: curUser.stats.eloRating,
+          user: curUser,
+          playersCount: 2,
+        },
+      })
+    );
+  };
+
+  // Contacts challenge handler
+  const handleChallengeContact = (contactUser: UserProfile | any) => {
+    handleDirectChallengeUser(contactUser);
   };
 
   const activePlayer = gameState ? gameState.players[gameState.activePlayerIndex] : null;
@@ -1187,7 +1236,7 @@ export default function App() {
         onOpenPrivacyPolicy={() => setCurrentScreen('privacy')}
         onOpenDeleteAccount={() => setCurrentScreen('delete-account')}
         onOpenDataSafety={() => setCurrentScreen('data-safety')}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
+        onOpenAuth={() => handleOpenAuth(false)}
         onOpenRules={() => setIsRulesModalOpen(true)}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
@@ -1225,9 +1274,10 @@ export default function App() {
             onStartQuickMatch={startQuickMatch}
             onCreateOnlineRoom={createOnlineRoom}
             onJoinOnlineRoom={joinOnlineRoom}
+            onChallengePlayer={handleDirectChallengeUser}
             isMatchmaking={isMatchmaking}
             onCancelMatchmaking={cancelMatchmaking}
-            onOpenAuth={() => setIsAuthModalOpen(true)}
+            onOpenAuth={handleOpenAuth}
           />
         )}
 
@@ -1357,6 +1407,7 @@ export default function App() {
                     onRollClick={handleRollDice}
                     timerEnabled={gameState.turnTimerEnabled !== false}
                     diceSkin={themeSettings.diceSkin}
+                    gameMode={gameState.mode}
                     onToggleTimer={handleToggleTurnTimer}
                   />
                 )}
@@ -1532,6 +1583,7 @@ export default function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={handleAuthSuccess}
+        defaultToRegister={authDefaultToRegister}
       />
 
       {/* Rules Modal */}

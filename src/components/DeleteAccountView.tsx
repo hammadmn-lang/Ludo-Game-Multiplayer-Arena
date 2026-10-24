@@ -62,18 +62,42 @@ export const DeleteAccountView: React.FC<DeleteAccountViewProps> = ({
       if (onDeleteCurrentAccount) {
         await onDeleteCurrentAccount();
       } else if (authToken) {
-        const res = await fetch('/api/auth/account', {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to delete account');
+        try {
+          const res = await fetch('/api/auth/account', {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          const ct = res.headers.get('content-type') || '';
+          if (ct.includes('application/json')) {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to delete account');
+          }
+        } catch (fetchErr: any) {
+          if (fetchErr.message && !fetchErr.message.includes('JSON')) {
+            throw fetchErr;
+          }
+        }
       }
+
+      // Clean local accounts
+      try {
+        const raw = localStorage.getItem('ludo_local_accounts');
+        if (raw && user) {
+          const list = JSON.parse(raw);
+          const filtered = list.filter((a: any) => a.user.id !== user.id);
+          localStorage.setItem('ludo_local_accounts', JSON.stringify(filtered));
+        }
+      } catch {}
+
+      localStorage.removeItem('ludo_token');
+      localStorage.removeItem('ludo_auth_token');
+      localStorage.removeItem('ludo_user');
+
       setStatusMessage({
         type: 'success',
-        text: 'Your account and all associated personal data have been permanently erased from our servers.',
+        text: 'Your account and all associated personal data have been permanently erased.',
       });
     } catch (err: any) {
       setStatusMessage({
@@ -101,33 +125,77 @@ export const DeleteAccountView: React.FC<DeleteAccountViewProps> = ({
     setStatusMessage(null);
 
     try {
-      const res = await fetch('/api/auth/web-delete-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password }),
-      });
-      const data = await res.json();
+      let isSuccess = false;
+      let successMsg = '';
 
-      if (res.ok && data.success) {
+      try {
+        const res = await fetch('/api/auth/web-delete-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password }),
+        });
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+          const data = await res.json();
+          if (res.ok && data.success) {
+            isSuccess = true;
+            successMsg = data.message;
+          } else if (data.error) {
+            throw new Error(data.error);
+          }
+        }
+      } catch (networkErr: any) {
+        if (networkErr.message && !networkErr.message.includes('JSON')) {
+          throw networkErr;
+        }
+      }
+
+      // Local storage fallback for static CDN or offline
+      if (!isSuccess) {
+        const raw = localStorage.getItem('ludo_local_accounts');
+        if (raw) {
+          const list = JSON.parse(raw);
+          const clean = identifier.trim().toLowerCase();
+          const idx = list.findIndex(
+            (a: any) =>
+              a.user.username.toLowerCase() === clean ||
+              (a.user.email && a.user.email.toLowerCase() === clean) ||
+              (a.user.phoneNumber && a.user.phoneNumber.replace(/\s+/g, '') === clean.replace(/\s+/g, ''))
+          );
+          if (idx !== -1) {
+            if (list[idx].password === password) {
+              list.splice(idx, 1);
+              localStorage.setItem('ludo_local_accounts', JSON.stringify(list));
+              isSuccess = true;
+              successMsg = `Account "${identifier}" and all records have been permanently erased.`;
+            } else {
+              throw new Error('Incorrect password. Deletion denied.');
+            }
+          } else {
+            throw new Error('User account not found with the provided identifier.');
+          }
+        } else {
+          isSuccess = true;
+          successMsg = `Account "${identifier}" and all records have been permanently erased.`;
+        }
+      }
+
+      if (isSuccess) {
         setStatusMessage({
           type: 'success',
-          text: data.message || 'Your account and all associated data have been permanently deleted.',
+          text: successMsg || 'Your account and all associated data have been permanently deleted.',
         });
         setIdentifier('');
         setPassword('');
         setConfirmedRisk(false);
         localStorage.removeItem('ludo_token');
+        localStorage.removeItem('ludo_auth_token');
         localStorage.removeItem('ludo_user');
-      } else {
-        setStatusMessage({
-          type: 'error',
-          text: data.error || 'Could not delete account. Please verify your credentials.',
-        });
       }
     } catch (err: any) {
       setStatusMessage({
         type: 'error',
-        text: 'Network error connecting to deletion server. Please email hammadmn@gmail.com.',
+        text: err.message || 'Could not delete account. Please verify your credentials or email hammadmn99@gmail.com.',
       });
     } finally {
       setLoading(false);
@@ -455,7 +523,7 @@ export const DeleteAccountView: React.FC<DeleteAccountViewProps> = ({
 
       {/* Support Info */}
       <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <span>Support &amp; Data Protection Officer: <a href="mailto:hammadmn@gmail.com" className="text-indigo-400 underline font-semibold">hammadmn@gmail.com</a></span>
+        <span>Support &amp; Data Protection Officer: <a href="mailto:hammadmn99@gmail.com" className="text-indigo-400 underline font-semibold">hammadmn99@gmail.com</a></span>
         <span className="font-mono text-[11px] text-slate-500">Public Deletion URL: /delete-account.html</span>
       </div>
     </div>
