@@ -1119,21 +1119,21 @@ export default function App() {
   const isMyTurn = activePlayer ? !activePlayer.isAI : false;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500 selection:text-neutral-950">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500 selection:text-neutral-950">
       {/* Contact Online Toast Alert */}
       {contactOnlineToast && (
-        <div className="fixed top-16 right-4 z-50 p-3.5 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fadeIn">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-          <div className="text-xs">
-            <span className="font-bold text-white">{contactOnlineToast.username}</span>
+        <div className="fixed top-16 right-2 sm:right-4 z-50 p-3 sm:p-3.5 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-2xl backdrop-blur-md flex items-center gap-2.5 sm:gap-3 max-w-[calc(100vw-16px)] animate-fadeIn">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+          <div className="text-xs min-w-0">
+            <span className="font-bold text-white truncate block sm:inline">{contactOnlineToast.username}</span>
             {contactOnlineToast.country && (
-              <span className="text-slate-400"> ({contactOnlineToast.country})</span>
+              <span className="text-slate-400 text-[11px]"> ({contactOnlineToast.country})</span>
             )}
-            <span className="text-emerald-400 block font-medium">is now online & ready to play!</span>
+            <span className="text-emerald-400 block font-medium text-[11px]">is now online & ready to play!</span>
           </div>
           <button
             onClick={() => setContactOnlineToast(null)}
-            className="text-slate-400 hover:text-white p-1"
+            className="text-slate-400 hover:text-white p-1 shrink-0"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -1142,14 +1142,14 @@ export default function App() {
 
       {/* Contact Playing Live Notification Toast */}
       {contactPlayingToast && (
-        <div className="fixed top-20 right-4 z-50 p-4 rounded-3xl bg-indigo-950/95 border-2 border-amber-500/80 shadow-2xl backdrop-blur-md flex items-start gap-3.5 animate-fadeIn max-w-sm">
+        <div className="fixed top-20 right-2 sm:right-4 z-50 p-3 sm:p-4 rounded-3xl bg-indigo-950/95 border-2 border-amber-500/80 shadow-2xl backdrop-blur-md flex items-start gap-2.5 sm:gap-3.5 animate-fadeIn max-w-[calc(100vw-16px)] sm:max-w-sm">
           <div className="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center shrink-0">
             <Play className="w-4 h-4 fill-amber-400" />
           </div>
-          <div className="flex-1 text-xs">
+          <div className="flex-1 text-xs min-w-0">
             <div className="flex items-center justify-between">
-              <span className="font-extrabold text-white text-sm">{contactPlayingToast.username}</span>
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
+              <span className="font-extrabold text-white text-sm truncate">{contactPlayingToast.username}</span>
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse shrink-0 ml-1">
                 Playing Now
               </span>
             </div>
@@ -1173,7 +1173,7 @@ export default function App() {
           </div>
           <button
             onClick={() => setContactPlayingToast(null)}
-            className="text-slate-400 hover:text-white p-1"
+            className="text-slate-400 hover:text-white p-1 shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
@@ -1182,7 +1182,7 @@ export default function App() {
 
       {/* Incoming Match Invitation Modal/Toast */}
       {incomingInvite && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-3xl bg-slate-900 border-2 border-indigo-500 shadow-2xl backdrop-blur-md max-w-sm w-full animate-fadeIn">
+        <div className="fixed bottom-6 right-2 sm:right-6 left-2 sm:left-auto z-50 p-4 rounded-3xl bg-slate-900 border-2 border-indigo-500 shadow-2xl backdrop-blur-md max-w-[calc(100vw-16px)] sm:max-w-sm w-full mx-auto animate-fadeIn">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl font-bold">
@@ -1245,7 +1245,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-3 sm:p-6 max-w-6xl w-full mx-auto flex flex-col justify-center">
+      <main className="flex-1 p-2.5 sm:p-6 max-w-6xl w-full max-w-full overflow-x-hidden mx-auto flex flex-col justify-center">
         {/* Screen 1: Lobby */}
         {currentScreen === 'lobby' && (
           <LobbyView
@@ -1500,7 +1500,7 @@ export default function App() {
 
       {/* Penalty / Forfeit Notification Toast */}
       {penaltyToast && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 p-4 rounded-3xl bg-slate-900 border-2 border-rose-500/80 shadow-2xl backdrop-blur-md max-w-md w-full animate-fadeIn flex items-start gap-3.5">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 p-4 rounded-3xl bg-slate-900 border-2 border-rose-500/80 shadow-2xl backdrop-blur-md w-[calc(100vw-24px)] max-w-md mx-auto animate-fadeIn flex items-start gap-3.5">
           <div className="p-2.5 rounded-2xl bg-rose-500/20 text-rose-400 shrink-0">
             <ShieldAlert className="w-6 h-6" />
           </div>
@@ -1524,8 +1524,8 @@ export default function App() {
 
       {/* Forfeit Confirmation Modal */}
       {isForfeitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+          <div className="w-[calc(100vw-20px)] max-w-md mx-auto my-auto bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl relative text-center">
             <div className="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mx-auto mb-4">
               <Flag className="w-7 h-7" />
             </div>

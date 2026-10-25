@@ -416,32 +416,34 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setOnlineTabSubMode('quick')}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`flex-1 py-1.5 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
                     onlineTabSubMode === 'quick' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <Sparkles className="w-3 h-3" />
-                  <span>Quick Match</span>
+                  <span className="truncate">Quick Match</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setOnlineTabSubMode('challenge')}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`flex-1 py-1.5 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
                     onlineTabSubMode === 'challenge' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <Zap className="w-3 h-3 text-amber-400" />
-                  <span>Challenge Online User</span>
+                  <span className="hidden sm:inline">Challenge User</span>
+                  <span className="sm:hidden">Challenge</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setOnlineTabSubMode('invite')}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`flex-1 py-1.5 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1 ${
                     onlineTabSubMode === 'invite' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <Share2 className="w-3 h-3 text-cyan-400" />
-                  <span>Invite Contact</span>
+                  <span className="hidden sm:inline">Invite Contact</span>
+                  <span className="sm:hidden">Invite</span>
                 </button>
               </div>
 

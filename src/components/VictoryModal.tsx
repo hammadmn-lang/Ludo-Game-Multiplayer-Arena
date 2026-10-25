@@ -58,8 +58,8 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   const champion = orderedPlayers[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl text-center relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="w-[calc(100vw-20px)] max-w-md mx-auto my-auto bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl text-center relative overflow-hidden">
         
         {/* Decorative Indigo/Amber Glow */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />

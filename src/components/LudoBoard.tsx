@@ -87,7 +87,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
 
   return (
     <div
-      className={`relative w-full max-w-[540px] aspect-square mx-auto select-none rounded-3xl p-3 sm:p-4 backdrop-blur transition-all duration-300 ${theme.boardOuterClass}`}
+      className={`relative w-full max-w-[min(100vw-16px,540px)] aspect-square mx-auto select-none rounded-2xl sm:rounded-3xl p-2 sm:p-4 backdrop-blur transition-all duration-300 ${theme.boardOuterClass}`}
       id="bento-ludo-board-outer"
     >
       {/* Board Base Container */}

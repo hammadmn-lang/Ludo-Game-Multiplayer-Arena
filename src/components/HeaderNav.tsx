@@ -66,25 +66,25 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   const tier = user ? getRankTier(user.stats.eloRating) : null;
 
   return (
-    <header className="w-full bg-slate-900/90 border-b border-slate-800/80 sticky top-0 z-40 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+    <header className="w-full max-w-full overflow-x-hidden bg-slate-900/95 border-b border-slate-800/80 sticky top-0 z-40 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-2">
         {/* Brand / Logo */}
         <button
           onClick={() => {
             onNavigate('lobby');
             setIsMobileMenuOpen(false);
           }}
-          className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer group shrink-0"
+          className="flex items-center gap-1.5 sm:gap-3 text-left cursor-pointer group shrink-0"
           id="btn-nav-home"
         >
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-tr from-indigo-500 via-indigo-600 to-purple-500 rounded-xl flex items-center justify-center font-black text-lg sm:text-xl text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-tr from-indigo-500 via-indigo-600 to-purple-500 rounded-xl flex items-center justify-center font-black text-base sm:text-xl text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
             🎲
           </div>
           <div>
-            <h1 className="font-extrabold text-sm sm:text-lg text-white tracking-tight leading-none flex items-center gap-1">
-              LUDO<span className="text-indigo-400 font-black">PREMIER</span>
+            <h1 className="font-extrabold text-xs sm:text-lg text-white tracking-tight leading-none flex items-center gap-0.5 sm:gap-1">
+              LUDO<span className="text-indigo-400 font-black hidden xs:inline">PREMIER</span>
             </h1>
-            <div className="hidden xs:flex items-center gap-1.5 mt-0.5">
+            <div className="hidden sm:flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-wider">
                 Arena
@@ -255,10 +255,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                   setIsMobileMenuOpen(false);
                 }}
                 id="btn-nav-signin"
-                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition active:scale-95 cursor-pointer shrink-0"
+                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition active:scale-95 cursor-pointer shrink-0"
               >
                 <LogIn className="w-3.5 h-3.5" />
-                <span>Sign In / Register</span>
+                <span className="hidden xs:inline">Sign In / Register</span>
+                <span className="xs:hidden">Sign In</span>
               </button>
             </div>
           )}
