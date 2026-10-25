@@ -31,6 +31,7 @@ import {
   Smartphone,
   ArrowRight,
   LogIn,
+  MessageCircle,
 } from 'lucide-react';
 import { ThemeSettings } from '../types/theme';
 
@@ -61,6 +62,7 @@ interface LobbyViewProps {
   isMatchmaking: boolean;
   onCancelMatchmaking: () => void;
   onOpenAuth: (defaultToRegister?: boolean) => void;
+  onSendWhatsAppInvite?: (contactPhone: string, contactName?: string) => void;
 }
 
 const AVAILABLE_AVATARS = ['🦁', '🐯', '🐉', '🦅', '👑', '🎯', '⚡', '🦊', '🤖', '🌟', '🦄', '🥋', '🔥', '🎲'];
@@ -95,6 +97,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   isMatchmaking,
   onCancelMatchmaking,
   onOpenAuth,
+  onSendWhatsAppInvite,
 }) => {
   const [activeTab, setActiveTab] = useState<GameMode>('online_multiplayer');
 
@@ -115,6 +118,36 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const [copiedAppInvite, setCopiedAppInvite] = useState(false);
   const [onlineTabSubMode, setOnlineTabSubMode] = useState<'quick' | 'challenge' | 'invite'>('quick');
+
+  // WhatsApp Pickup & Invite State
+  const [waPhone, setWaPhone] = useState('');
+  const [waName, setWaName] = useState('');
+  const [waCountry, setWaCountry] = useState('+92');
+
+  const handlePickContactForWhatsApp = async () => {
+    if (typeof navigator !== 'undefined' && 'contacts' in navigator && 'ContactsManager' in window) {
+      try {
+        const props = ['name', 'tel'];
+        const selected = await (navigator as any).contacts.select(props, { multiple: false });
+        if (selected && selected[0]) {
+          setWaName(selected[0].name?.[0] || 'Friend');
+          setWaPhone(selected[0].tel?.[0] || '');
+        }
+      } catch {}
+    } else if (onOpenContacts) {
+      onOpenContacts();
+    }
+  };
+
+  const handleSendDirectWhatsApp = (phone: string, name?: string) => {
+    const cleanDigits = phone.replace(/[^0-9+]/g, '');
+    const fullPhone = cleanDigits.startsWith('+') ? cleanDigits : `${waCountry}${cleanDigits.replace(/^0+/, '')}`;
+    if (onSendWhatsAppInvite) {
+      onSendWhatsAppInvite(fullPhone, name || waName || 'Friend');
+    } else {
+      handleSendAppInvite();
+    }
+  };
 
   // Mock live lobby chat messages
   const [lobbyChat, setLobbyChat] = useState<{ id: string; user: string; text: string; isMe?: boolean }[]>([
@@ -570,32 +603,113 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
                 </div>
               )}
 
-              {/* Sub-view C: Send App Invite to Contact & Ask to Join */}
+              {/* Sub-view C: WhatsApp Phone Pickup & App Invite */}
               {onlineTabSubMode === 'invite' && (
                 <div className="w-full space-y-3 py-1">
-                  <div className="p-3.5 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 space-y-2">
-                    <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs">
-                      <Smartphone className="w-4 h-4 text-indigo-400" />
-                      <span>Send App Invite to Contact</span>
+                  {/* WhatsApp Phone Pickup & Direct Invite Card */}
+                  <div className="p-3.5 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-indigo-950/60 border border-emerald-500/40 space-y-3 shadow-xl">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-emerald-300 font-extrabold text-xs">
+                        <MessageCircle className="w-4 h-4 text-emerald-400" />
+                        <span>Pickup WhatsApp Phone Number & Play</span>
+                      </div>
+                      <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Play Store & Web
+                      </span>
                     </div>
+
                     <p className="text-[11px] text-slate-300 leading-relaxed">
-                      Invite friends from your phonebook or WhatsApp! Once they open the app, you will be notified and can immediately ask them to join your match.
+                      Pick a friend&apos;s phone number from your contacts or enter it below to send a WhatsApp match invitation. When they tap the link, they join you online immediately!
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                    {/* WhatsApp Phone Pickup Form */}
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-1">
+                      <div className="sm:col-span-3">
+                        <select
+                          value={waCountry}
+                          onChange={(e) => setWaCountry(e.target.value)}
+                          className="w-full px-2 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                        >
+                          <option value="+92">🇵🇰 Pakistan (+92)</option>
+                          <option value="+91">🇮🇳 India (+91)</option>
+                          <option value="+1">🇺🇸 US/CA (+1)</option>
+                          <option value="+44">🇬🇧 UK (+44)</option>
+                          <option value="+971">🇦🇪 UAE (+971)</option>
+                          <option value="+966">🇸🇦 KSA (+966)</option>
+                          <option value="+880">🇧🇩 Bangladesh (+880)</option>
+                          <option value="+49">🇩🇪 Germany (+49)</option>
+                          <option value="+33">🇫🇷 France (+33)</option>
+                          <option value="+61">🇦🇺 Australia (+61)</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-4">
+                        <input
+                          type="tel"
+                          value={waPhone}
+                          onChange={(e) => setWaPhone(e.target.value)}
+                          placeholder="Phone (e.g. 300 1234567)"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-5 flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={handlePickContactForWhatsApp}
+                          className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                          title="Pick contact from phone address book"
+                        >
+                          <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
+                          <span>Contacts</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSendDirectWhatsApp(waPhone, waName)}
+                          className="flex-1 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>Invite &amp; Host</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Quick WhatsApp Contacts list */}
+                    <div className="pt-1 flex flex-wrap items-center gap-1.5 text-[11px]">
+                      <span className="text-slate-400 font-semibold mr-1">Quick WhatsApp:</span>
+                      {[
+                        { name: 'David', phone: '+1 (555) 234-5678' },
+                        { name: 'Sarah', phone: '+44 7700 900123' },
+                        { name: 'Raj', phone: '+91 98765 43210' },
+                      ].map((q) => (
+                        <button
+                          key={`quick-${q.name}`}
+                          type="button"
+                          onClick={() => handleSendDirectWhatsApp(q.phone, q.name)}
+                          className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-white flex items-center gap-1 cursor-pointer transition"
+                        >
+                          <MessageCircle className="w-3 h-3 text-emerald-400" />
+                          <span>{q.name}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Universal App Share Link */}
+                    <div className="pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row gap-2">
                       <button
                         onClick={handleSendAppInvite}
-                        className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-lg active:scale-95"
+                        className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700"
                       >
                         {copiedAppInvite ? (
                           <>
                             <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>Invite Link Copied!</span>
+                            <span>Match Link Copied!</span>
                           </>
                         ) : (
                           <>
-                            <Share2 className="w-3.5 h-3.5" />
-                            <span>Share App Invite (WhatsApp / SMS)</span>
+                            <Share2 className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>Share Match Link (Universal)</span>
                           </>
                         )}
                       </button>
@@ -603,10 +717,10 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
                       {onOpenContacts && (
                         <button
                           onClick={onOpenContacts}
-                          className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 font-bold text-xs border border-indigo-500/40 transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <Phone className="w-3.5 h-3.5 text-indigo-400" />
-                          <span>Contacts List</span>
+                          <Users className="w-3.5 h-3.5" />
+                          <span>All Friends ({ONLINE_CHALLENGE_USERS.length})</span>
                         </button>
                       )}
                     </div>

@@ -1274,8 +1274,8 @@ async function startServer() {
             }
           });
 
-          // If target is an offline contact or simulated champion, simulate automatic acceptance after 1.5s
-          if (!delivered) {
+          // If target is an offline contact or simulated champion, simulate automatic acceptance after 1.5s only if not waiting for real WhatsApp friend
+          if (!delivered && !payload.isWhatsAppInvite && !payload.waitForContact) {
             const targetUser = db.users[targetUserId];
             const botName = targetUser ? targetUser.username : 'Opponent';
             const botAvatar = targetUser ? targetUser.avatar : '🎯';
@@ -1393,6 +1393,26 @@ async function startServer() {
             eloRating,
           });
 
+          // Send confirmation back to newly joined player
+          ws.send(
+            JSON.stringify({
+              event: 'room_joined',
+              payload: {
+                code: room.code,
+                hostId: room.hostId,
+                playersCount: room.playersCount,
+                players: room.clients.map((c) => ({
+                  id: c.userId,
+                  username: c.username,
+                  avatar: c.avatar,
+                  color: c.color,
+                  eloRating: c.eloRating,
+                })),
+              },
+            })
+          );
+
+          // Broadcast to everyone in the room
           broadcastToRoom(room, 'player_joined', {
             code: room.code,
             players: room.clients.map((c) => ({

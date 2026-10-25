@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlayerColor } from '../types/ludo';
 import { COLOR_PALETTE } from '../utils/ludoConstants';
-import { Users, Copy, Check, Play, LogOut, ShieldCheck } from 'lucide-react';
+import { Users, Copy, Check, Play, LogOut, ShieldCheck, MessageCircle } from 'lucide-react';
 
 interface WaitingRoomProps {
   roomCode: string;
@@ -36,15 +36,33 @@ export const WaitingRoom: React.FC<WaitingRoomProps> = ({
     }
   };
 
+  const handleShareWhatsApp = () => {
+    const inviteUrl = `${window.location.origin}/?room=${roomCode}`;
+    const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.ludo.arena';
+    const text = `🎲 *Ludo Match Waiting Room!*
+Join my live Ludo game right now!
+
+⚡ *Room Code:* ${roomCode}
+👉 *Tap to Join Online Instantly:*
+${inviteUrl}
+
+📲 *Google Play Store App Link:*
+${playStoreUrl}
+
+Come online and let's play! 👑`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  };
+
   const canStart = isHost && players.length >= 2;
 
   return (
-    <div className="max-w-xl mx-auto p-6 sm:p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl space-y-6 animate-fadeIn">
+    <div className="max-w-xl mx-auto p-4 sm:p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl space-y-5 sm:space-y-6 animate-fadeIn w-[calc(100vw-20px)] sm:w-full">
       {/* Room Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-3">
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            Game Room
+            Game Room Code
           </span>
           <div className="flex items-center gap-2 mt-0.5">
             <h2 className="text-2xl font-black font-mono text-amber-400 tracking-wider">
@@ -52,7 +70,7 @@ export const WaitingRoom: React.FC<WaitingRoomProps> = ({
             </h2>
             <button
               onClick={handleCopy}
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
               title="Copy Room Code"
             >
               {copied ? (
@@ -61,10 +79,18 @@ export const WaitingRoom: React.FC<WaitingRoomProps> = ({
                 <Copy className="w-4 h-4" />
               )}
             </button>
+            <button
+              onClick={handleShareWhatsApp}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer"
+              title="Invite Friends on WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Invite on WhatsApp</span>
+            </button>
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="sm:text-right flex sm:block items-center justify-between">
           <span className="text-xs text-slate-400">Players Joined</span>
           <div className="text-lg font-black text-white">
             {players.length} / {maxPlayers}

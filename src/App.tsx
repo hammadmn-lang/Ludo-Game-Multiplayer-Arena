@@ -217,6 +217,28 @@ export default function App() {
     window.addEventListener('hashchange', handleUrlRoute);
     window.addEventListener('popstate', handleUrlRoute);
 
+    // Check if user arrived via WhatsApp or shared match invite URL (?room=CHAMP1234 or ?join=CHAMP1234)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
+    const inviteRoom = urlParams.get('room') || urlParams.get('join') || urlParams.get('code') || hashParams.get('room') || hashParams.get('join');
+
+    if (inviteRoom) {
+      const targetRoomCode = inviteRoom.trim().toUpperCase();
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch {}
+
+      setTimeout(() => {
+        joinOnlineRoom(targetRoomCode);
+        setPenaltyToast({
+          title: 'Joining WhatsApp Match!',
+          description: `Joined Room ${targetRoomCode} from WhatsApp invitation. Preparing match!`,
+          type: 'disconnect',
+          penalty: 0,
+        });
+      }, 700);
+    }
+
     return () => {
       window.removeEventListener('hashchange', handleUrlRoute);
       window.removeEventListener('popstate', handleUrlRoute);
@@ -286,6 +308,12 @@ export default function App() {
           setOnlinePlayers(payload.players);
           setIsHost(true);
           setOnlineMaxPlayers(payload.playersCount);
+          setCurrentScreen('waiting_room');
+        } else if (ev === 'room_joined') {
+          setOnlineRoomCode(payload.code);
+          setOnlinePlayers(payload.players);
+          setIsHost(false);
+          setOnlineMaxPlayers(payload.playersCount || payload.players.length);
           setCurrentScreen('waiting_room');
         } else if (ev === 'player_joined') {
           setOnlinePlayers(payload.players);
@@ -1115,6 +1143,75 @@ export default function App() {
     handleDirectChallengeUser(contactUser);
   };
 
+  // WhatsApp Invite & Auto-Host Match Handler
+  const handleSendWhatsAppInvite = (contactPhone: string, contactName?: string) => {
+    const ws = connectWebSocket();
+    const generatedCode = `CHAMP${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const curUser = user || {
+      id: `guest_${Date.now()}`,
+      username: `Host_${Math.floor(Math.random() * 1000)}`,
+      avatar: '👑',
+      stats: { eloRating: 1200 },
+    };
+
+    // Create room for 2 players with custom code and wait for WhatsApp friend
+    ws.send(
+      JSON.stringify({
+        event: 'create_room',
+        payload: {
+          code: generatedCode,
+          userId: curUser.id,
+          username: curUser.username,
+          avatar: curUser.avatar,
+          eloRating: curUser.stats.eloRating,
+          user: curUser,
+          playersCount: 2,
+        },
+      })
+    );
+
+    // Tell server we're waiting for a real contact to avoid auto-filling with bot
+    ws.send(
+      JSON.stringify({
+        event: 'invite_contact',
+        payload: {
+          targetUserId: `whatsapp_${contactPhone.replace(/[^0-9]/g, '')}`,
+          senderName: curUser.username,
+          roomCode: generatedCode,
+          mode: 'WhatsApp 1v1 Championship Duel',
+          isWhatsAppInvite: true,
+          waitForContact: true,
+        },
+      })
+    );
+
+    // Prepare deep links: web instant join & play store app
+    const cleanPhone = contactPhone.replace(/[^0-9]/g, '');
+    const webInviteUrl = `${window.location.origin}/?room=${generatedCode}`;
+    const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.ludo.arena';
+
+    const messageText = `🎲 *Ludo Championship Challenge!*
+Hey ${contactName ? contactName : 'Friend'}! ${curUser.username} challenged you to a live match on Ludo Arena!
+
+⚡ *Match Room Code:* ${generatedCode}
+👉 *Tap to Join & Play Online Now:*
+${webInviteUrl}
+
+📲 *Or Open in Google Play Store App:*
+${playStoreUrl}
+
+Come online and let's play! 👑`;
+
+    const encoded = encodeURIComponent(messageText);
+    const waUrl = cleanPhone.length >= 7
+      ? `https://wa.me/${cleanPhone}?text=${encoded}`
+      : `https://api.whatsapp.com/send?text=${encoded}`;
+
+    setIsContactsModalOpen(false);
+    window.open(waUrl, '_blank');
+  };
+
   const activePlayer = gameState ? gameState.players[gameState.activePlayerIndex] : null;
   const isMyTurn = activePlayer ? !activePlayer.isAI : false;
 
@@ -1278,6 +1375,7 @@ export default function App() {
             isMatchmaking={isMatchmaking}
             onCancelMatchmaking={cancelMatchmaking}
             onOpenAuth={handleOpenAuth}
+            onSendWhatsAppInvite={handleSendWhatsAppInvite}
           />
         )}
 
@@ -1599,6 +1697,7 @@ export default function App() {
         currentUser={user}
         authToken={authToken}
         onInviteUser={handleChallengeContact}
+        onSendWhatsAppInvite={handleSendWhatsAppInvite}
         onNotifyContactPlaying={(contactName, mode, roomCode) => {
           setContactPlayingToast({
             username: contactName,
