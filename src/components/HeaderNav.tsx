@@ -66,27 +66,27 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   const tier = user ? getRankTier(user.stats.eloRating) : null;
 
   return (
-    <header className="w-full max-w-full overflow-x-hidden bg-slate-900/95 border-b border-slate-800/80 sticky top-0 z-40 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-2">
+    <header className="w-full max-w-[100vw] overflow-hidden bg-slate-900/95 border-b border-slate-800/80 sticky top-0 z-40 backdrop-blur-md select-none">
+      <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-1 sm:gap-2 min-w-0 overflow-hidden">
         {/* Brand / Logo */}
         <button
           onClick={() => {
             onNavigate('lobby');
             setIsMobileMenuOpen(false);
           }}
-          className="flex items-center gap-1.5 sm:gap-3 text-left cursor-pointer group shrink-0"
+          className="flex items-center gap-1.5 sm:gap-2.5 text-left cursor-pointer group shrink-0"
           id="btn-nav-home"
         >
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-tr from-indigo-500 via-indigo-600 to-purple-500 rounded-xl flex items-center justify-center font-black text-base sm:text-xl text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-tr from-indigo-500 via-indigo-600 to-purple-500 rounded-xl flex items-center justify-center font-black text-base sm:text-lg text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200 shrink-0">
             🎲
           </div>
-          <div>
-            <h1 className="font-extrabold text-xs sm:text-lg text-white tracking-tight leading-none flex items-center gap-0.5 sm:gap-1">
+          <div className="min-w-0">
+            <h1 className="font-extrabold text-xs sm:text-base text-white tracking-tight leading-none flex items-center gap-0.5">
               LUDO<span className="text-indigo-400 font-black hidden xs:inline">PREMIER</span>
             </h1>
-            <div className="hidden sm:flex items-center gap-1.5 mt-0.5">
+            <div className="hidden sm:flex items-center gap-1 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+              <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">
                 Arena
               </span>
             </div>
@@ -94,7 +94,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
         </button>
 
         {/* Center Nav Screen Switcher */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 min-w-0 shrink-0">
           {hasActiveGame && currentScreen !== 'game' && (
             <button
               onClick={() => {
@@ -102,7 +102,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 else onNavigate('game');
                 setIsMobileMenuOpen(false);
               }}
-              className="px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold text-xs flex items-center gap-1 animate-pulse cursor-pointer shadow-lg shadow-amber-500/20"
+              className="px-2 sm:px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold text-xs flex items-center gap-1 animate-pulse cursor-pointer shadow-lg shadow-amber-500/20 shrink-0"
               title="Return to your active game in progress"
             >
               <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
@@ -110,14 +110,14 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             </button>
           )}
 
-          <nav className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-2xl border border-slate-800 shadow-inner">
+          <nav className="flex items-center gap-0.5 sm:gap-1 bg-slate-950/80 p-0.5 sm:p-1 rounded-2xl border border-slate-800 shadow-inner shrink-0">
             <button
               onClick={() => {
                 onNavigate('lobby');
                 setIsMobileMenuOpen(false);
               }}
               id="nav-tab-play"
-              className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+              className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
                 currentScreen === 'lobby' || currentScreen === 'game' || currentScreen === 'waiting_room'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -133,7 +133,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               id="nav-tab-rankings"
-              className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+              className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
                 currentScreen === 'leaderboard'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -149,7 +149,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               id="nav-tab-stats"
-              className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+              className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
                 currentScreen === 'profile'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -162,9 +162,9 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
         </div>
 
         {/* Right Tools & User Profile */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Desktop-only Quick Icons */}
-          <div className="hidden lg:flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Desktop-only Quick Icons (XL screens only, hidden on mobile/tablet) */}
+          <div className="hidden xl:flex items-center gap-1.5 shrink-0">
             {/* Contacts / Friends Button */}
             {onOpenContacts && (
               <button
@@ -227,20 +227,20 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               id="btn-user-profile-badge"
-              className="flex items-center gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 sm:py-1.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 transition cursor-pointer group shadow-sm shrink-0"
+              className="flex items-center gap-1.5 pl-1 pr-2 sm:pr-3 py-1 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 transition cursor-pointer group shadow-sm shrink-0 max-w-[120px] sm:max-w-none"
             >
               <div
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm border-2 transition-transform group-hover:scale-105"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm border-2 transition-transform group-hover:scale-105 shrink-0"
                 style={{ borderColor: tier?.color || '#6366f1' }}
               >
                 <span>{user.avatar}</span>
               </div>
-              <div className="text-left hidden xs:block">
-                <span className="block font-bold text-xs text-slate-100 max-w-[80px] sm:max-w-[100px] truncate leading-tight">
+              <div className="text-left hidden xs:block truncate min-w-0">
+                <span className="block font-bold text-xs text-slate-100 truncate leading-tight">
                   {user.username}
                 </span>
                 <span
-                  className="block text-[9px] sm:text-[10px] font-mono font-semibold"
+                  className="block text-[9px] sm:text-[10px] font-mono font-semibold truncate"
                   style={{ color: tier?.color || '#818cf8' }}
                 >
                   {user.stats.eloRating} Elo
@@ -248,18 +248,18 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               </div>
             </button>
           ) : (
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center shrink-0">
               <button
                 onClick={() => {
                   onOpenAuth();
                   setIsMobileMenuOpen(false);
                 }}
                 id="btn-nav-signin"
-                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition active:scale-95 cursor-pointer shrink-0"
+                className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition active:scale-95 cursor-pointer shrink-0"
               >
-                <LogIn className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">Sign In / Register</span>
-                <span className="xs:hidden">Sign In</span>
+                <LogIn className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">Sign In / Register</span>
+                <span className="sm:hidden text-[11px]">Sign In</span>
               </button>
             </div>
           )}
@@ -267,7 +267,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-1.5 sm:p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition cursor-pointer lg:hidden shrink-0"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition cursor-pointer xl:hidden shrink-0"
             title="More Options"
             aria-label="Toggle Menu"
           >
@@ -278,7 +278,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
 
       {/* MOBILE DRAWER / ACTION SHEET */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-slate-950/98 border-b border-slate-800 px-4 py-4 space-y-3 animate-fadeIn backdrop-blur-xl">
+        <div className="xl:hidden bg-slate-950/98 border-b border-slate-800 px-4 py-4 space-y-3 animate-fadeIn backdrop-blur-xl">
           {/* If not logged in, extra registration CTA inside mobile drawer */}
           {!user && (
             <div className="p-3 rounded-2xl bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/40 flex items-center justify-between">

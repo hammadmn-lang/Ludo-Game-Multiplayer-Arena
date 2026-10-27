@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no" />
     <title>Ludo Game & Multiplayer Arena</title>
     <meta name="description" content="Full-featured Ludo game featuring VS Computer AI, Local Pass & Play, Real-time Online Matchmaking, live in-game chat, turn notifications, player rankings, profile statistics, and match history." />
     <meta name="copyright" content="© 2026 Ludo Game & Multiplayer Arena. All rights reserved." />
@@ -22,8 +22,8 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="manifest" href="/manifest.json" />
   </head>
-  <body class="bg-slate-950 text-white min-h-screen w-full max-w-full overflow-x-hidden m-0 p-0" style="background-color: #020617;">
-    <div id="root" class="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-950"></div>
+  <body class="bg-slate-950 text-white min-h-screen w-full max-w-[100vw] overflow-x-clip m-0 p-0 select-none" style="background-color: #020617; touch-action: pan-y; overflow-x: clip;">
+    <div id="root" class="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-slate-950" style="background-color: #020617; touch-action: pan-y; overflow-x: clip;"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

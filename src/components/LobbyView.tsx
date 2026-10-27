@@ -99,7 +99,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   onOpenAuth,
   onSendWhatsAppInvite,
 }) => {
-  const [activeTab, setActiveTab] = useState<GameMode>('online_multiplayer');
+  const [activeTab, setActiveTab] = useState<GameMode>('local_multiplayer');
 
   // VS Computer setup states
   const [vsPlayerCount, setVsPlayerCount] = useState<number>(4);
@@ -247,7 +247,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   };
 
   return (
-    <div className="w-full space-y-4 animate-fadeIn" id="bento-lobby-container">
+    <div className="w-full max-w-full overflow-hidden space-y-4 animate-fadeIn" id="bento-lobby-container">
       
       {/* ================= MOBILE ACCOUNT REGISTRATION & SIGN-IN PROMPT BANNER ================= */}
       {!user && (
@@ -399,19 +399,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
           {/* Top Mode Segmented Pill */}
           <div className="w-full flex items-center justify-between gap-1.5 z-10 mb-3">
             <div className="flex p-1 bg-slate-950/80 border border-slate-800 rounded-2xl w-full sm:w-auto">
-              <button
-                onClick={() => setActiveTab('online_multiplayer')}
-                id="bento-tab-online"
-                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                  activeTab === 'online_multiplayer'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>Online Arena</span>
-              </button>
-
+              {/* Option 1: Pass & Play */}
               <button
                 onClick={() => setActiveTab('local_multiplayer')}
                 id="bento-tab-local"
@@ -422,9 +410,10 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
                 }`}
               >
                 <Users className="w-3.5 h-3.5" />
-                <span>Pass & Play</span>
+                <span>Pass &amp; Play</span>
               </button>
 
+              {/* Option 2: VS AI */}
               <button
                 onClick={() => setActiveTab('vs_computer')}
                 id="bento-tab-vs-ai"
@@ -436,6 +425,20 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
               >
                 <Bot className="w-3.5 h-3.5" />
                 <span>VS AI</span>
+              </button>
+
+              {/* Option 3: Online Arena */}
+              <button
+                onClick={() => setActiveTab('online_multiplayer')}
+                id="bento-tab-online"
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  activeTab === 'online_multiplayer'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>Online Arena</span>
               </button>
             </div>
           </div>
@@ -1036,11 +1039,27 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
             </div>
           </div>
 
-          {/* Tile 2: Challenge Online User */}
+          {/* Tile 2: VS AI / Computer */}
+          <div
+            onClick={() => setActiveTab('vs_computer')}
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-4 flex items-center gap-3.5 hover:border-indigo-500/50 hover:bg-slate-850 transition-all cursor-pointer group shadow-lg"
+          >
+            <div className="w-11 h-11 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-xl text-indigo-400 group-hover:scale-110 transition-transform shrink-0">
+              🤖
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-slate-100 group-hover:text-indigo-300 transition-colors">
+                VS AI (Computer)
+              </h4>
+              <p className="text-[10px] text-slate-400">Solo practice against smart bots</p>
+            </div>
+          </div>
+
+          {/* Tile 3: Online Arena */}
           <div
             onClick={() => {
               setActiveTab('online_multiplayer');
-              setOnlineTabSubMode('challenge');
+              setOnlineTabSubMode('quick');
             }}
             className="bg-slate-900 border border-slate-800 rounded-3xl p-4 flex items-center gap-3.5 hover:border-amber-500/50 hover:bg-slate-850 transition-all cursor-pointer group shadow-lg"
           >
@@ -1049,9 +1068,9 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-100 group-hover:text-amber-300 transition-colors">
-                Challenge Online Player
+                Online Arena &amp; Challenge
               </h4>
-              <p className="text-[10px] text-slate-400">Select active champion</p>
+              <p className="text-[10px] text-slate-400">Live 4P quick match &amp; duels</p>
             </div>
           </div>
 

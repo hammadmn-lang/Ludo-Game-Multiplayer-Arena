@@ -805,7 +805,15 @@ export default function App() {
         const data = await res.json();
         if (data.success) {
           setLastEloChange(data.eloChange);
-          setUser((prev) => (prev ? { ...prev, stats: data.stats } : null));
+          setUser((prev) => {
+            if (!prev) return null;
+            const updatedMatches = data.record
+              ? [data.record, ...(prev.matches || [])].slice(0, 50)
+              : prev.matches;
+            const updated = { ...prev, stats: data.stats, matches: updatedMatches };
+            localStorage.setItem('ludo_user', JSON.stringify(updated));
+            return updated;
+          });
         }
       } catch {
         // Fallback
@@ -958,7 +966,15 @@ export default function App() {
         });
         const data = await res.json();
         if (data.success) {
-          setUser((prev) => (prev ? { ...prev, stats: data.stats } : null));
+          setUser((prev) => {
+            if (!prev) return null;
+            const updatedMatches = data.record
+              ? [data.record, ...(prev.matches || [])].slice(0, 50)
+              : prev.matches;
+            const updated = { ...prev, stats: data.stats, matches: updatedMatches };
+            localStorage.setItem('ludo_user', JSON.stringify(updated));
+            return updated;
+          });
           setPenaltyToast({
             title: 'Match Forfeited',
             description: `You voluntarily left the match. Rank reduced: ${data.eloPenalty} Elo.`,
@@ -1216,7 +1232,7 @@ Come online and let's play! 👑`;
   const isMyTurn = activePlayer ? !activePlayer.isAI : false;
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500 selection:text-neutral-950">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-slate-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500 selection:text-neutral-950">
       {/* Contact Online Toast Alert */}
       {contactOnlineToast && (
         <div className="fixed top-16 right-2 sm:right-4 z-50 p-3 sm:p-3.5 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-2xl backdrop-blur-md flex items-center gap-2.5 sm:gap-3 max-w-[calc(100vw-16px)] animate-fadeIn">
@@ -1342,7 +1358,7 @@ Come online and let's play! 👑`;
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-2.5 sm:p-6 max-w-6xl w-full max-w-full overflow-x-hidden mx-auto flex flex-col justify-center">
+      <main className="flex-1 p-2 sm:p-6 max-w-6xl w-full max-w-[100vw] overflow-x-clip mx-auto flex flex-col justify-center min-w-0">
         {/* Screen 1: Lobby */}
         {currentScreen === 'lobby' && (
           <LobbyView
